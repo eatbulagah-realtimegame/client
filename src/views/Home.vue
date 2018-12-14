@@ -169,6 +169,20 @@ export default {
     }
 }
 </script>
+// export default {
+//   name: 'home',
+//   computed : {
+//     nameState () {
+//       return this.name.length > 3 ? true : false
+//     }
+//   },
+//   data () {
+//     return {
+//       name: ''
+//     }
+//   }
+// }
+
 
 <style scoped>
 input, button {
@@ -201,4 +215,26 @@ input, button {
 ul, li {
   list-style: none;
 }
+</style>
+  .audio {
+    display:inline;
+  }
+  .board {
+    justify-content: center;
+    margin-top: 18%;
+  }
+  .board .container {
+    font-family: 'Ubuntu', sans-serif;
+    color: rgb(255, 255, 255);
+  }
+
+  .board h1 {
+    opacity: 20%;
+    font-family: 'Chelsea Market', cursive;
+    display: inline;
+    margin: 10px 0;
+  }
+  .player-name {
+    width: 50vh;
+  }
 </style>
