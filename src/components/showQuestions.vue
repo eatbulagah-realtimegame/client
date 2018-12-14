@@ -25,7 +25,11 @@
 
 
 <script>
+<<<<<<< HEAD
 import database from "@/assets/config.js";
+=======
+import fire from "../mykey.js";
+>>>>>>> anhar
 
 export default {
   name: "app",
