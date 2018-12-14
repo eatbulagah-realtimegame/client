@@ -33,6 +33,7 @@ export default {
     data() {
         return {
             room: '',
+            name: ''
             // roomList: []
             listQuestions: [],
             selectedQuestion: {}
@@ -40,7 +41,10 @@ export default {
     },
     computed : mapState({
         roomList2: state => state.roomList2,
-        room2: state => state.room2
+        room2: state => state.room2,
+        nameState () {
+        return this.name.length > 3 ? true : false
+        }
     }),
     methods: {
         // chooseRoom: function(chosenRoom) {
@@ -169,20 +173,6 @@ export default {
     }
 }
 </script>
-// export default {
-//   name: 'home',
-//   computed : {
-//     nameState () {
-//       return this.name.length > 3 ? true : false
-//     }
-//   },
-//   data () {
-//     return {
-//       name: ''
-//     }
-//   }
-// }
-
 
 <style scoped>
 input, button {
@@ -212,29 +202,4 @@ input, button {
   color: white;
 }
 
-ul, li {
-  list-style: none;
-}
-</style>
-  .audio {
-    display:inline;
-  }
-  .board {
-    justify-content: center;
-    margin-top: 18%;
-  }
-  .board .container {
-    font-family: 'Ubuntu', sans-serif;
-    color: rgb(255, 255, 255);
-  }
-
-  .board h1 {
-    opacity: 20%;
-    font-family: 'Chelsea Market', cursive;
-    display: inline;
-    margin: 10px 0;
-  }
-  .player-name {
-    width: 50vh;
-  }
 </style>
