@@ -25,7 +25,7 @@
 
 
 <script>
-import fire from "../key.js";
+import database from "@/assets/config.js";
 
 export default {
   name: "app",
@@ -54,7 +54,7 @@ export default {
 
     getQuestions(){
       let self = this
-      return fire.database().ref('questions').once('value')
+      return database.ref('questions').once('value')
       .then(function(snapshot) {
         let dataQuestions = snapshot.val()
         let questionlist = []

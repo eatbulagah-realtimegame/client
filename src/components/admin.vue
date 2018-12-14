@@ -19,7 +19,7 @@
 
 
 <script>
-import fire from "../key.js";
+import database from "@/assets/config.js";
 
 export default {
   name: "app",
@@ -48,9 +48,9 @@ export default {
                 answer: this.jawaban
             }
             console.log(questionAnswer)
-            // To-Do: Push message to firebase
-            //Push message to firebase reference
-            fire.database().ref('questions').push(questionAnswer);
+            // To-Do: Push message to databasebase
+            //Push message to databasebase reference
+            database.ref('questions').push(questionAnswer);
             this.soal = ''
             this.jawaban = ''
     },
