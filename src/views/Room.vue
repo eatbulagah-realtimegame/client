@@ -1,7 +1,8 @@
 <template>
     <div>
+        <h2>{{isPlaying}}</h2>
         <h1>Score {{myPoints}}</h1>
-        <div v-if="!gameOver">
+        <div v-if="isPlaying">
             <div class="bg-dark text-white">
                 <p class="text-white">Currently playing: </p>
                 {{ currentPlayerName }}
@@ -19,13 +20,21 @@
                 </p>
             </div>
             <form @submit.prevent="checkPrediction()">
-                <div v-if="!gameOver && initialized" class="d-flex flex-column justify-content-center" >
+                <div v-if="isPlaying && initialized" class="d-flex flex-column justify-content-center" >
                     <label for="">Your Answer</label>
                     
                     <input type="text" v-model="myAnswer" class="form-control">
                     <button class="btn btn-primary" type="">Submit</button>
                 </div>
             </form>
+            <div>
+                {{keyQuestion}}
+                {{selectedQuestion.question}} <br>
+                {{selectedQuestion.answer}}
+            </div>
+        </div>
+        <div v-if="!isPlaying">
+            WINNER : {{winner}}
         </div>
     </div>
 </template>
@@ -40,6 +49,7 @@ export default {
             currentPlayerName: localStorage.getItem('username'),
             initialized: false,
             gameOver: false,
+            isPlaying: true,
             player1: '',
             player2: '',
             player1Info: '',
@@ -48,8 +58,15 @@ export default {
             room: '',
             userId: '',
             myAnswer: '',
-            realAnswer: 'ayams', //still hardcoded,
-            myPoints: 0
+            selectedQuestion : {
+                question: '',
+                answer: ''
+            },
+            keyQuestion: '',
+            myPoints: 0,
+            winner: '',
+            listQuestions: [],
+            roomNow: localStorage.getItem('room')
         }   
     },
     methods: {
@@ -81,16 +98,18 @@ export default {
         checkPrediction() {
             let self = this
             let ref = database.ref('room/' + self.room + '/users/' + this.userId)
-            if(this.realAnswer === this.myAnswer) {
+            if(this.selectedQuestion.answer === this.myAnswer) {
                 let currentPoint = 0
                 ref.once('value', function(snapshot) {
                     let refPoint = database.ref('room/' + self.room + '/users/' + self.userId + '/points')
                     currentPoint = snapshot.val().points + 1
                     refPoint.set(currentPoint)
+                    self.myPoints = currentPoint
                     self.checkPoints(currentPoint)
+                    self.removeQuestion()
                 })
-                alert('BENAR')
-            } else if(this.realAnswer.slice(0,4) === this.myAnswer.slice(0,4)) {
+                //ganti jawaban
+            } else if(this.selectedQuestion.answer.slice(0,4) === this.myAnswer.slice(0,4)) {
                 alert('BISA JADI')
                 this.myAnswer = ''
             } else {
@@ -98,27 +117,73 @@ export default {
                 this.myAnswer = ''
             }
         },
+        removeQuestion() {
+            let self = this
+            return new Promise((resolve, reject) => {
+                database.ref('room/' + self.room + '/questions/' + self.keyQuestion).remove()
+                resolve()
+            })
+        },
         checkPoints(point) {
+            let self = this
             if(point >= 5) {
-                this.myPoints = point
+                // this.winner = this.currentPlayerName
+                // this.gameOver = true
+                database.ref('room/' + self.room + '/isPlaying/status').set(false)
+                database.ref('room/' + self.room + '/winner').set(self.currentPlayerName)
+
                 alert('GAME SELESAI')
             } else {
-                this.myPoints = point
                 console.log(point)
                 alert('dari check points'+point)
             }
         },
-        // getQuestions(){
-        //     let self = this
-        //     return database.ref('questions').once('value')
-        //     .then( snapshot = {
-        //         let dataQuestions = snapshot.val()
-        //         Object.keys
-        //     })
-        // },
+        getQuestions(){
+            let self = this
+            self.listQuestions = []
+            return database.ref('room/' + self.roomNow + '/questions').once('value')
+            .then( snapshot => {
+                let dataQuestions = snapshot.val()
+                console.log("+++++====")
+                console.log(dataQuestions)
+                Object.keys(dataQuestions).forEach( key => {
+                    self.listQuestions.push({
+                        key: key,
+                        question: dataQuestions[key].question,
+                        answer: dataQuestions[key].answer
+                    })
+                })
+                
+                self.selectedQuestion = self.listQuestions[0]
+                self.keyQuestion = self.listQuestions[0].key
+                console.log('new KEY', self.keyQuestion)
+                console.log('new Quest', self.selectedQuestion)
+                // console.log('=======')
+                // console.log(self.listQuestions)
+                // self.randomQuestion()
+            })
+        },
+        // randomQuestion(){
+        //     this.selectedQuestion = this.listQuestions[Math.floor(Math.random()*4)]
+        //     console.log(this.selectedQuestion)
+        // }
     },
     created() {
+        let self = this
         this.checkAllUsers()
+        this.getQuestions()
+        database.ref('room/' + self.roomNow + '/questions').on('value', function(snapshot) {
+            self.getQuestions()
+        })
+        database.ref('room/' + self.room + '/users/' + this.userId).on('value', function(snapshot) {
+            self.myPoints = snapshot.val().points
+        })
+        database.ref('room/' + self.room + '/isPlaying').on('value', function(snapshot) {
+            self.isPlaying = snapshot.val().status
+        })
+        database.ref('room/' + self.room + '/winner').on('value', function(snapshot) {
+            self.winner = snapshot.val()
+        })
     }
 }
 </script>
