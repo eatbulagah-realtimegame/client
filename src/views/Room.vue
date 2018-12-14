@@ -1,24 +1,28 @@
 <template>
     <div>
-        <h2>{{isPlaying}}</h2>
+        <!-- <h2>{{isPlaying}}</h2> -->
         <div class="container">
-            <div class="row">
+            
+            <div class="row" v-if="isPlaying">
+                <div class="bgwhite mb-4">
+                    <h1>{{selectedQuestion.question}}</h1>
+                </div>
                 <div class="col-md-6">
                     <b-card 
                             :img-src="imgUrl"
                             img-alt="Img"
                             img-top
                             >
-                        
-                        <div slot="footer">
-                            <small class="text-muted"></small>
-                        </div>
+                        <input type="text" v-model="myAnswer" class="form-control input-lg">
+                        <audio ref="bisajadi" src="https://storage.googleapis.com/shinemodyste/bisajadi.mp3" ></audio>
+                        <audio src="https://storage.googleapis.com/shinemodyste/tidak.mp3" ref="tidak"></audio>
+                        <audio src="https://storage.googleapis.com/shinemodyste/iya.mp3" ref="ya"></audio>
                     </b-card>
                 </div>
                 <div class="col-md-6">
                     <b-card bg-variant="info"
                             text-variant="white"
-                            :header="currentPlayerName"
+                            :header="'Player: '+currentPlayerName"
                             class="text-center">
                         <h4>Score {{myPoints}}</h4>
                         <form @submit.prevent="checkPrediction()">
@@ -31,40 +35,20 @@
                     </b-card>
                 </div>
             </div>
+            <div class="row justify-content-center" v-if="!isPlaying">
+                <div class="col-md-12 bgwhite m-auto" v-if="currentPlayerName == winner">
+                    <h1>Congrats! You're the Winner</h1>
+                    <img src="https://storage.googleapis.com/client-trekshop/celebration.gif" width="1000px" alt="">
+                </div>
+                <div class="bgwhite" v-if="currentPlayerName !== winner">
+                    <h1>You Lose! Better luck next time!</h1>
+                    <img src="https://storage.googleapis.com/client-trekshop/youlose.gif" width="500px" alt="" srcset="">
+                </div>
+            </div>
+
         </div>
         
-        <h1>Score {{myPoints}}</h1>
-        <div v-if="isPlaying">
-            <div class="bg-dark text-white">
-                <p class="text-white">Input your answer : </p>
-                {{ currentPlayerName }}
-            </div>
-            <div class="bg-darkn text-white">
-
-                <p class="waiting bg-dark text-white" v-if="initialized === false">Waiting for opponent
-                    <span>
-                        <div class="loader">
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        </div>
-                    </span>
-                </p>
-            </div>
-            <form @submit.prevent="checkPrediction()">
-                <div v-if="isPlaying && initialized" class="d-flex flex-column justify-content-center" >
-                    <label for="">Your Answer</label>
-                    
-                    <input type="text" v-model="myAnswer" class="form-control">
-                    <button class="btn btn-primary" type="">Submit</button>
-                </div>
-            </form>
-            <div>
-                {{keyQuestion}}
-                {{selectedQuestion.question}} <br>
-                {{selectedQuestion.answer}}
-            </div>
-        </div>
+        
         <div v-if="!isPlaying">
             WINNER : {{winner}}
         </div>
@@ -100,7 +84,7 @@ export default {
             listQuestions: [],
             roomNow: localStorage.getItem('room'),
             realAnswer: 'ayams', //still hardcoded,
-            imgUrl: 'https://storage.googleapis.com/client-trekshop/tidakSRT.gif.gif',
+            imgUrl: 'https://storage.googleapis.com/client-trekshop/tebak.gif',
             images: [{
                 name: 'bisajadi',
                 url: 'https://storage.googleapis.com/client-trekshop/bisajadisrt.gif'
@@ -110,6 +94,9 @@ export default {
             }, {
                 name: 'ya',
                 url: 'https://storage.googleapis.com/client-trekshop/hooray.gif'
+            }, {
+                name: 'tebak',
+                url: 'https://storage.googleapis.com/client-trekshop/tebak.gif'
             }]
         }   
     },
@@ -154,15 +141,34 @@ export default {
                 })
                 // alert('BENAR')
                 this.imgUrl = this.images[2].url
+                this.$refs.ya.play()
+
+                this.myAnswer = ''
+                setTimeout(()=>{
+                    this.imgUrl = this.images[3].url
+                }, 2500)
+                
                 
             } else if(this.selectedQuestion.answer.slice(0,4) === this.myAnswer.slice(0,4)) {
                 // alert('BISA JADI')
                 this.myAnswer = ''
                 this.imgUrl = this.images[0].url
+                // this.$('#bisaJadi').play()
+                this.$refs.bisajadi.play()
+                setTimeout(()=>{
+                    this.imgUrl = this.images[3].url
+                }, 2500)
+                
             } else {
                 // alert('TIDAK')
                 this.myAnswer = ''
                 this.imgUrl = this.images[1].url
+                this.$refs.tidak.play()
+
+                setTimeout(()=>{
+                    this.imgUrl = this.images[3].url
+                }, 1500)
+                
             }
         },
         removeQuestion() {
@@ -180,7 +186,7 @@ export default {
                 database.ref('room/' + self.room + '/isPlaying/status').set(false)
                 database.ref('room/' + self.room + '/winner').set(self.currentPlayerName)
 
-                alert('GAME SELESAI')
+                // alert('GAME SELESAI')
             } else {
                 console.log(point)
             }
@@ -220,6 +226,7 @@ export default {
         this.checkAllUsers()
         this.getQuestions()
         database.ref('room/' + self.roomNow + '/questions').on('value', function(snapshot) {
+            
             self.getQuestions()
         })
         database.ref('room/' + self.room + '/users/' + this.userId).on('value', function(snapshot) {
@@ -236,5 +243,9 @@ export default {
 </script>
 
 <style>
-
+    .bgwhite{
+        background-color: antiquewhite;
+        width: 100%;
+        height: 100%;
+    }
 </style>
