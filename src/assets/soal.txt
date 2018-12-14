@@ -1,0 +1,32 @@
+q:  makan daging anjing dengan sayur
+a:  kol
+
+q:  makanan kesukaan anak hacktiv
+a:  gorengan
+
+q:  anda ikut lomba, anda menyalip orang posisi 2, berapa posisi anda sekarang (jawab dengan huruf)
+a:  dua
+
+q:  ayah mary punya 5 anak: Nana, Nene, Nini, Nono. siapa anak kelima?
+a:  mary
+
+q: 2+2x2-2/2 = ? (jawab dengan huruf)
+a: lima
+
+q:  Hitung berapa total angka nol dari uang pecahan seratus ribu ? (jawab dengan huruf)
+a:  dua puluh
+
+q: Apabila seekor sapi menghadapkan wajahnya ke Tenggara, maka ekornya menghadap kemana?
+a: bawah
+
+q: ( 9 x 9 + 9 + 9 + 9 : 9 ) x 0 = ?
+a: nol
+
+q: ada 12 ikan di kolam dan setengahnya tenggelam, masih ada berapa ikan di kolam? (jawab dengan huruf)
+a: dua belas 
+
+q: Jika ani memiliki uang sebanyak 1500. Kemudian dia membeli permen seharga 800. Berapa uang kembalian yang diterima ani? (jawab dengan huruf)
+a: dua ratus
+
+q: instruktur paling ganteng di hacktiv8 ? (panggilan)
+a: semmi

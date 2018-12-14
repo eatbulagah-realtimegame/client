@@ -32,7 +32,7 @@ export default {
     }
   },
   created(){
-    this.getQuestions()
+    // this.getQuestions()
   },
   methods:{
     updateUsername(e) {
@@ -48,9 +48,19 @@ export default {
                 answer: this.jawaban
             }
             console.log(questionAnswer)
+<<<<<<< HEAD
             // To-Do: Push message to databasebase
             //Push message to databasebase reference
             database.ref('questions').push(questionAnswer);
+=======
+            // To-Do: Push message to firebase
+            //Push message to firebase reference
+            // fire.database().ref('questions').set(questionAnswer);
+            fire.database().ref('questions/soal').push({
+              question: this.soal,
+              answer: this.jawaban
+            });
+>>>>>>> add soal
             this.soal = ''
             this.jawaban = ''
     },
