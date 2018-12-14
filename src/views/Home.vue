@@ -34,6 +34,8 @@ export default {
         return {
             room: '',
             // roomList: []
+            listQuestions: [],
+            selectedQuestion: {}
         }
     },
     computed : mapState({
@@ -59,18 +61,33 @@ export default {
                     console.log('check room', result);
                     if (!result) {
                         //kalo ga ada isinya, kita set inisalisasi
-                        database.ref('room/' + self.room).set({
-                            name: self.room,
-                        })
-                            .then(response => {
-                                console.log('set room name', response);
-                                localStorage.setItem('room', self.room);
-                                //self.$router.push('login');
-                                self.$router.push('login');
+                        self.getQuestions()
+                            .then(() => {
+                                database.ref('room/' + self.room).set({
+                                    name: self.room,
+                                    
+                                    isPlaying: { "status" : true}
+                                })
+                                    .then(response => {
+                                        console.log(self.listQuestions)
+                                        self.listQuestions.forEach( (e, index) => {
+                                            database.ref('room/' + self.room + '/questions/soal' + index).set({
+                                                question : e.question,
+                                                answer: e.answer
+                                            })
+                                        });
+                                        //console.log('set room name', response);
+                                        localStorage.setItem('room', self.room);
+                                        //self.$router.push('login');
+                                        self.$router.push('login');
+                                    })
+                                    .catch(function(err) {
+                                        console.log('Set Room Name Error: ', err);
+                                    });
                             })
-                            .catch(function(err) {
-                                console.log('Set Room Name Error: ', err);
-                            });
+                            .catch(() => {
+                                console.log('gagal maning')
+                            })
                     } else {
                         //kalo udah ada isinya
                         let roomUsers = result.users;
@@ -99,7 +116,51 @@ export default {
         // },
         getAllRoom2 () {
             this.$store.dispatch('getAllRoom')
+        },
+
+        getQuestions(){
+            let self = this
+            return new Promise ((resolve, reject) => {
+                database.ref('questions').once('value', function(snapshot) {
+                    let dataQuestions = snapshot.val()
+                    Object.keys(dataQuestions).forEach( key => {
+                        self.listQuestions.push({
+                            question: dataQuestions[key].question,
+                            answer: dataQuestions[key].answer
+                        })
+                    })
+                    // let keys = Object.keys(dataQuestions)
+                    self.listQuestions = self.shuffle(self.listQuestions)
+                    console.log(self.listQuestions)
+                    console.log('=======')
+                    // self.randomQuestion()
+                    resolve()
+                })
+            })
+        },
+        randomQuestion(){
+            this.selectedQuestion = this.listQuestions[Math.floor(Math.random()*4)]
+            console.log('ey',this.selectedQuestion)
+        },
+        shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
         }
+
     },
     created() {
         //this.getAllRoom();
