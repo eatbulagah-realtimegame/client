@@ -1,25 +1,34 @@
 <template>
     <div class="home">
-        <div class="mt-4 mb-5 d-flex align-items-center justify-content-center mr-5">
-            <div class="display-3">EATBULAGA || {{room2}}</div>
+        <div class="mb-5 d-flex align-items-center justify-content-center mr-5">
+            <div class="display-3">EATBULAGA KW</div>
         </div>
-        <div class="alert mb-0 container col-7" id="alert-subtitle">
-            <h3 id="subtitle">Maen jempol yuks!</h3>
-        </div>
-        <div class="d-flex justify-content-center align-items-center mb-4 col-9 m-auto p-3 rounded" id="divroom">
-            <div class="mr-5 d-flex align-items-center">
-                <div class="lead mr-5">Playing Rooms</div> 
-                <i class="fas fa-arrow-circle-right"></i>
+        
+        <div class="container mb-4 m-auto p-3 rounded group" id="divroom">
+            <div class="row">
+                <div class="col-8">
+                    <div class="mr-5 d-flex align-items-center">
+                        <div class="lead mr-5">Playing Rooms</div> 
+                    </div>
+                    <div class="row"  id="listroom" v-if="roomList2.length > 0">
+                        <div class="col-3" id="oneroom" @click="chooseRoom2(single)" v-for="(single, index) in roomList2" :key="index">
+                            <button type="button" class="btn btn-info m-2">{{single}}</button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div>
+                        <form @submit.prevent="setRoom">
+                            <h5> Create new room </h5>
+                            <input type="text" class="form-control" placeholder="Room" v-model="room"><br>
+                            <button class="btn btn-outline-dark" id="btn-room">Enter Room</button>
+                            <label> Entering room : {{room2}} </label>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="ml- mr-5" id="listroom" v-if="roomList2.length > 0">
-                <div id="oneroom" @click="chooseRoom2(single)" v-for="(single, index) in roomList2" :key="index"> {{single}}</div>
-            </div>
-            <div class="col-6">
-                <form @submit.prevent="setRoom">
-                    <input type="text" class="form-control" placeholder="Room" v-model="room"><br>
-                    <button class="btn btn-outline-dark" id="btn-room">Enter Room</button>
-                </form>
-            </div>
+            
         </div>
     </div>
 </template>
@@ -33,6 +42,7 @@ export default {
     data() {
         return {
             room: '',
+            name: '',
             // roomList: []
             listQuestions: [],
             selectedQuestion: {}
@@ -176,18 +186,24 @@ input, button {
   text-align: center;
 }
 
+.display-3{
+  color: aliceblue;
+  font-family: 'Chelsea Market', cursive;
+}
+
 #oneroom:hover {
   background-color: #003366;
   cursor: pointer;
 }
 
 #divroom {
-  background-color: rgb(134, 5, 5);
+  font-family: 'Ubuntu'; 
+  background-color: rgba(161, 142, 31, 0.829);
   color: white;
 }
 
 #btn-room {
-  background-color: black;
+  background-color: rgb(182, 17, 17);
   border: none !important;
   color: white;
 }
@@ -198,7 +214,4 @@ input, button {
   color: white;
 }
 
-ul, li {
-  list-style: none;
-}
 </style>
