@@ -42,7 +42,7 @@ export default {
     data() {
         return {
             room: '',
-            name: ''
+            name: '',
             // roomList: []
             listQuestions: [],
             selectedQuestion: {}
